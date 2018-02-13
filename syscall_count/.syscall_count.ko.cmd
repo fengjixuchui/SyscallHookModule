@@ -1,0 +1,1 @@
+cmd_/home/rangosta/kernel_module/syscall_count/syscall_count.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-24-generic/scripts/module-common.lds --build-id  -o /home/rangosta/kernel_module/syscall_count/syscall_count.ko /home/rangosta/kernel_module/syscall_count/syscall_count.o /home/rangosta/kernel_module/syscall_count/syscall_count.mod.o

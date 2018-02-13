@@ -1,0 +1,1 @@
+cmd_/home/rangosta/kernel_module/hypervisor/hypervisor.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-24-generic/scripts/module-common.lds --build-id  -o /home/rangosta/kernel_module/hypervisor/hypervisor.ko /home/rangosta/kernel_module/hypervisor/hypervisor.o /home/rangosta/kernel_module/hypervisor/hypervisor.mod.o
