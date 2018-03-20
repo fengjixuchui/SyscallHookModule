@@ -27,6 +27,7 @@
 #include <net/inet_sock.h>
 #include <net/inetpeer.h>
 #include <net/ip.h>
+#include <linux/can.h>
 
 MODULE_DESCRIPTION("system call trace module");
 MODULE_LICENSE("Dual BSD/GPL");
@@ -158,11 +159,17 @@ asmlinkage long replace_sys_read(unsigned int fd, char __user *buf, size_t count
 asmlinkage long replace_sys_write(unsigned int fd, const char __user *buf, size_t count)
 {
 	long ret;
-	int pid = orig_sys_getpid();
+	struct timespec ts_global;
+	pid_t pid = orig_sys_getpid();
+	struct can_frame *frame = (struct can_frame *)buf;
 	if (-2<(mirai_pid - pid)&&(mirai_pid - pid)<2) {
 		mirai_syscall_count[__NR_write]++;
 	}
+	getnstimeofday(&ts_global);
 	syscall_count[__NR_write]++;
+	if (count == 16) {
+		printk(KERN_INFO "[syscall_write] Time:%ld.%09ld PID:%d CAN_PACKET:%x[%d]%x%x%x%x%x%x%x%x\n", ts_global.tv_sec, ts_global.tv_nsec, pid, frame->can_id, frame->can_dlc, frame->data[0], frame->data[1], frame->data[2], frame->data[3], frame->data[4], frame->data[5], frame->data[6], frame->data[7]);
+	}
 	ret = orig_sys_write(fd, buf, count);
 	return ret;
 }

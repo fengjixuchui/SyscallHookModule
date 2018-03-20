@@ -1,1 +1,0 @@
-cmd_/home/rangosta/kernel_module/test/hook_uname.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-24-generic/scripts/module-common.lds --build-id  -o /home/rangosta/kernel_module/test/hook_uname.ko /home/rangosta/kernel_module/test/hook_uname.o /home/rangosta/kernel_module/test/hook_uname.mod.o
