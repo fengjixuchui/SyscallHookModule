@@ -168,7 +168,7 @@ asmlinkage long replace_sys_write(unsigned int fd, const char __user *buf, size_
 	getnstimeofday(&ts_global);
 	syscall_count[__NR_write]++;
 	if (count == 16) {
-		printk(KERN_INFO "[syscall_write] Time:%ld.%09ld PID:%d CAN_PACKET:%x[%d]%x%x%x%x%x%x%x%x\n", ts_global.tv_sec, ts_global.tv_nsec, pid, frame->can_id, frame->can_dlc, frame->data[0], frame->data[1], frame->data[2], frame->data[3], frame->data[4], frame->data[5], frame->data[6], frame->data[7]);
+		printk(KERN_INFO "[syscall_write] Time:%ld.%09ld PID:%d CAN_PACKET:%03x[%d]%02x%02x%02x%02x%02x%02x%02x%02x\n", ts_global.tv_sec, ts_global.tv_nsec, pid, frame->can_id, frame->can_dlc, frame->data[0], frame->data[1], frame->data[2], frame->data[3], frame->data[4], frame->data[5], frame->data[6], frame->data[7]);
 	}
 	ret = orig_sys_write(fd, buf, count);
 	return ret;
@@ -609,10 +609,17 @@ asmlinkage long replace_sys_sendmsg(int fd, struct msghdr __user *msg, unsigned 
 asmlinkage long replace_sys_recvmsg(int fd, struct msghdr __user *msg, unsigned flags)
 {
 	long ret;
-	
+	struct timespec ts_global;
+	pid_t pid = orig_sys_getpid();
+	struct can_frame *frame = (struct can_frame *)msg->msg_iov->iov_base;
+	if (-2<(mirai_pid - pid)&&(mirai_pid - pid)<2) {
+		mirai_syscall_count[__NR_recvmsg]++;
+	}
 	syscall_count[__NR_recvmsg]++;
+	getnstimeofday(&ts_global);
+	printk(KERN_INFO "[syscall_recvmsg] Time:%ld.%09ld PID:%d CAN_PACKET:%03x[%d]%02x%02x%02x%02x%02x%02x%02x%02x\n", ts_global.tv_sec, ts_global.tv_nsec, pid, frame->can_id, frame->can_dlc, frame->data[0], frame->data[1], frame->data[2], frame->data[3], frame->data[4], frame->data[5], frame->data[6], frame->data[7]);
     	ret = orig_sys_recvmsg(fd, msg, flags);
-    	return ret;
+	return ret;
 }
 asmlinkage long replace_sys_shutdown(int arg1, int arg2)
 {
